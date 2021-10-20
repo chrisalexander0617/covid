@@ -1,6 +1,11 @@
 import React, {Component} from 'react';
 import { GoogleMap, withScriptjs, withGoogleMap } from 'react-google-maps';
+/*
+"withScriptsjs" will be responsible for making sure our API script is rendered to the head of webpage 
+"withGoogleMap" initializes the map that will be wrapped with required outer div elements
+*/
 
+/* Styles that changes the theme of the map */
 const styles = [
     {
         "featureType": "all",
@@ -161,8 +166,11 @@ export default class Map extends Component
             <div style={{width:'50vw', height:'100vh'}}>
                 <WrappedMap 
                     googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_API_KEY}&callback=initMap&libraries=&v=weekly`}
+                    /* ? */
                     loadingElement={ <div style={{ height:'100%' }} /> }
+                     /* the container that the map goes in  */
                     containerElement={ <div style={{ height:'100%' }} /> }
+                     /* The actual map */
                     mapElement={ <div style={{ height:'100%' }} /> }
                 />
             </div>
