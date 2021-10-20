@@ -1,18 +1,41 @@
 import React, {useEffect, useState, Component} from 'react';
-import { Marker, GoogleMap, withScriptjs, withGoogleMap } from 'react-google-maps';
+import { 
+    Marker, 
+    GoogleMap, 
+    withScriptjs, 
+    withGoogleMap 
+} from 'react-google-maps';
+import axios from 'axios';
 /*
 "withScriptsjs" will be responsible for making sure our API script is rendered to the head of webpage 
-"withGoogleMap" initializes the map that will be wrapped with required outer div elements
+"withGoogleMap" initializes the map that will be wrapped with required outer div elements 
 */
 
 /* Styles that changes the theme of the map */
-const styles = [
+const styles = 
+
+[
+    {
+        "featureType": "all",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "visibility": "on"
+            }
+        ]
+    },
     {
         "featureType": "all",
         "elementType": "labels.text.fill",
         "stylers": [
             {
-                "color": "#ffffff"
+                "saturation": 36
+            },
+            {
+                "color": "#000000"
+            },
+            {
+                "lightness": 40
             }
         ]
     },
@@ -21,10 +44,22 @@ const styles = [
         "elementType": "labels.text.stroke",
         "stylers": [
             {
+                "visibility": "on"
+            },
+            {
                 "color": "#000000"
             },
             {
-                "lightness": 13
+                "lightness": 16
+            }
+        ]
+    },
+    {
+        "featureType": "all",
+        "elementType": "labels.icon",
+        "stylers": [
+            {
+                "visibility": "off"
             }
         ]
     },
@@ -34,6 +69,9 @@ const styles = [
         "stylers": [
             {
                 "color": "#000000"
+            },
+            {
+                "lightness": 20
             }
         ]
     },
@@ -42,22 +80,43 @@ const styles = [
         "elementType": "geometry.stroke",
         "stylers": [
             {
-                "color": "#144b53"
+                "color": "#000000"
             },
             {
-                "lightness": 14
+                "lightness": 17
             },
             {
-                "weight": 1.4
+                "weight": 1.2
+            }
+        ]
+    },
+    {
+        "featureType": "administrative.locality",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#c4c4c4"
+            }
+        ]
+    },
+    {
+        "featureType": "administrative.neighborhood",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#707070"
             }
         ]
     },
     {
         "featureType": "landscape",
-        "elementType": "all",
+        "elementType": "geometry",
         "stylers": [
             {
-                "color": "#08304b"
+                "color": "#000000"
+            },
+            {
+                "lightness": 20
             }
         ]
     },
@@ -66,10 +125,22 @@ const styles = [
         "elementType": "geometry",
         "stylers": [
             {
-                "color": "#0c4152"
+                "color": "#000000"
             },
             {
-                "lightness": 5
+                "lightness": 21
+            },
+            {
+                "visibility": "on"
+            }
+        ]
+    },
+    {
+        "featureType": "poi.business",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "visibility": "on"
             }
         ]
     },
@@ -78,7 +149,13 @@ const styles = [
         "elementType": "geometry.fill",
         "stylers": [
             {
-                "color": "#000000"
+                "color": "#be2026"
+            },
+            {
+                "lightness": "0"
+            },
+            {
+                "visibility": "on"
             }
         ]
     },
@@ -87,10 +164,40 @@ const styles = [
         "elementType": "geometry.stroke",
         "stylers": [
             {
-                "color": "#0b434f"
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway",
+        "elementType": "labels.text.stroke",
+        "stylers": [
+            {
+                "visibility": "off"
             },
             {
-                "lightness": 25
+                "hue": "#ff000a"
+            }
+        ]
+    },
+    {
+        "featureType": "road.arterial",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#000000"
+            },
+            {
+                "lightness": 18
             }
         ]
     },
@@ -99,19 +206,25 @@ const styles = [
         "elementType": "geometry.fill",
         "stylers": [
             {
-                "color": "#000000"
+                "color": "#575757"
             }
         ]
     },
     {
         "featureType": "road.arterial",
-        "elementType": "geometry.stroke",
+        "elementType": "labels.text.fill",
         "stylers": [
             {
-                "color": "#0b3d51"
-            },
+                "color": "#ffffff"
+            }
+        ]
+    },
+    {
+        "featureType": "road.arterial",
+        "elementType": "labels.text.stroke",
+        "stylers": [
             {
-                "lightness": 16
+                "color": "#2c2c2c"
             }
         ]
     },
@@ -121,30 +234,77 @@ const styles = [
         "stylers": [
             {
                 "color": "#000000"
+            },
+            {
+                "lightness": 16
+            }
+        ]
+    },
+    {
+        "featureType": "road.local",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#999999"
+            }
+        ]
+    },
+    {
+        "featureType": "road.local",
+        "elementType": "labels.text.stroke",
+        "stylers": [
+            {
+                "saturation": "-52"
             }
         ]
     },
     {
         "featureType": "transit",
-        "elementType": "all",
+        "elementType": "geometry",
         "stylers": [
             {
-                "color": "#146474"
+                "color": "#000000"
+            },
+            {
+                "lightness": 19
             }
         ]
     },
     {
         "featureType": "water",
-        "elementType": "all",
+        "elementType": "geometry",
         "stylers": [
             {
-                "color": "#021019"
+                "color": "#000000"
+            },
+            {
+                "lightness": 17
             }
         ]
     }
-]
+];
 
-function MapView(){
+function MapView()
+{
+    const [covidData, setCovidData] = useState(false);
+
+    useEffect(() => {
+        axios
+        .get('https://covid-api.mmediagroup.fr/v1/cases')
+        .then(res => {
+            setCovidData(res.data)
+        })
+        .catch(err => console.log(err))
+    },[])
+
+    if(covidData) {
+        console.log(covidData)
+        for(var country in covidData){
+            console.log(typeof country.All)
+        }
+    }
+    
+
     return (
         <GoogleMap 
             options={{
@@ -152,10 +312,8 @@ function MapView(){
             }}
             defaultZoom={10}
             defaultCenter={{lat:42, lng: -83}}
-        >
-        <Marker
-            position={{lat:42, lng: -83}}
-        />
+            >  
+            
         </GoogleMap>
     )
 }
@@ -164,20 +322,29 @@ const WrappedMap = withScriptjs(withGoogleMap(MapView));
 
 export default class Map extends Component
 {
+    constructor(){
+        super();
+    }
+
     render()
     {
         return (
-            <div style={{width:'50vw', height:'100vh'}}>
-                <WrappedMap 
-                    googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_API_KEY}&callback=initMap&libraries=&v=weekly`}
-                    /* ? */
-                    loadingElement={ <div style={{ height:'100%' }} /> }
-                     /* the container that the map goes in  */
-                    containerElement={ <div style={{ height:'100%' }} /> }
-                     /* The actual map */
-                    mapElement={ <div style={{ height:'100%' }} /> }
-                />
-            </div>
+            <>
+                <div style={{width:'50vw', height:'100vh', float:'left'}}>
+                    <WrappedMap 
+                        googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_API_KEY}&callback=initMap&libraries=&v=weekly`}
+                        /* ? */
+                        loadingElement={ <div style={{ height:'100%' }} /> }
+                        /* the container that the map goes in  */
+                        containerElement={ <div style={{ height:'100%' }} /> }
+                        /* The actual map */
+                        mapElement={ <div style={{ height:'100%' }} /> }
+                    />
+                </div>
+                <div style={{width:'50vw', height:'100vh', float:'right'}}>
+                    <button>Click</button>
+                </div>
+            </>
         )
     }
 }
