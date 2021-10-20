@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import { GoogleMap, withScriptjs, withGoogleMap } from 'react-google-maps';
+import React, {useEffect, useState, Component} from 'react';
+import { Marker, GoogleMap, withScriptjs, withGoogleMap } from 'react-google-maps';
 /*
 "withScriptsjs" will be responsible for making sure our API script is rendered to the head of webpage 
 "withGoogleMap" initializes the map that will be wrapped with required outer div elements
@@ -152,7 +152,11 @@ function MapView(){
             }}
             defaultZoom={10}
             defaultCenter={{lat:42, lng: -83}}
+        >
+        <Marker
+            position={{lat:42, lng: -83}}
         />
+        </GoogleMap>
     )
 }
 
