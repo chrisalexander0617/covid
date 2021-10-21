@@ -1,6 +1,9 @@
 import React, {useEffect, useState, Component} from 'react';
+import DataBox from '../components/DataBox';
+
 import { 
     Marker, 
+    InfoWindow,
     GoogleMap, 
     withScriptjs, 
     withGoogleMap 
@@ -286,35 +289,72 @@ const styles =
 
 function MapView()
 {
-    const [covidData, setCovidData] = useState(false);
+    const [covidData, setCovidData] = useState([]);
 
     useEffect(() => {
         axios
         .get('https://covid-api.mmediagroup.fr/v1/cases')
         .then(res => {
-            setCovidData(res.data)
+            setCovidData([res.data])
         })
         .catch(err => console.log(err))
     },[])
 
-    if(covidData) {
-        console.log(covidData)
-        for(var country in covidData){
-            console.log(typeof country.All)
+
+    if(covidData.length) {
+        var confirmedCases = covidData[0].US.All.confirmed;
+        var deaths = covidData[0].US.All.deaths;
+        var location =  covidData[0].US.All.abbreviation;
+        var lifeSpan = covidData[0].US.All.life_expectancy
+        
+        // getting markers for each state in America
+        var mapMarkers = [];
+        var i = 0
+
+        for(var property in covidData[0].US){
+            i += 1
+
+            var marker = <Marker  
+                key={i} 
+                name={property} 
+                position ={{lat:Number(covidData[0].US[property].lat), lng: Number(covidData[0].US[property].long)}} 
+            />;
+
+            mapMarkers.push(marker)
         }
     }
     
-
     return (
-        <GoogleMap 
-            options={{
-                styles
-            }}
-            defaultZoom={10}
-            defaultCenter={{lat:42, lng: -83}}
+        <>
+            <GoogleMap 
+                options={{styles}}
+                defaultZoom={10}
+                defaultCenter={{lat:42, lng: -83}}
             >  
-            
-        </GoogleMap>
+            {mapMarkers}
+            </GoogleMap>
+            {
+                covidData &&
+                <div className="data-box p-10">
+                    <div> 
+                        <h5>location</h5>
+                        <h2>{location}</h2> 
+                    </div>
+                    <div> 
+                        <h5>active cases</h5>
+                        <h2>{confirmedCases}</h2> 
+                    </div>
+                    <div> 
+                        <h5>life span</h5>
+                        <h2>{lifeSpan}</h2> 
+                    </div>
+                    <div> 
+                        <h5>deaths</h5>
+                        <h2>{deaths}</h2> 
+                    </div>
+                </div>
+            }
+        </>
     )
 }
 
@@ -330,7 +370,7 @@ export default class Map extends Component
     {
         return (
             <>
-                <div style={{width:'50vw', height:'100vh', float:'left'}}>
+                <div style={{width:'100vw', height:'100vh', float:'left'}}>
                     <WrappedMap 
                         googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_API_KEY}&callback=initMap&libraries=&v=weekly`}
                         /* ? */
@@ -340,9 +380,6 @@ export default class Map extends Component
                         /* The actual map */
                         mapElement={ <div style={{ height:'100%' }} /> }
                     />
-                </div>
-                <div style={{width:'50vw', height:'100vh', float:'right'}}>
-                    <button>Click</button>
                 </div>
             </>
         )
